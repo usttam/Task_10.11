@@ -1,4 +1,6 @@
 // элементы в DOM можно получить при помощи функции querySelector
+const minWeight = document.querySelector('.minweight__input'); // поле ввода мин. значения для сортировки
+const maxWeight = document.querySelector('.maxweight__input'); // поле ввода макс. значения для сортировки
 const fruitsList = document.querySelector('.fruits__list'); // список карточек
 const shuffleButton = document.querySelector('.shuffle__btn'); // кнопка перемешивания
 const filterButton = document.querySelector('.filter__btn'); // кнопка фильтрации
@@ -28,25 +30,24 @@ let fruits = JSON.parse(fruitsJSON);
 
 // отрисовка карточек
 const display = () => {
- // fruitsList.replaceChildren();
-  // TODO: очищаем fruitsList от вложенных элементов,
+  fruitsList.replaceChildren();
+  // Очищаем fruitsList от вложенных элементов,
   // чтобы заполнить актуальными данными из fruits
 
-  for (let i = 0; i < fruits.length; i++) {
-    //let newLi= document.createElement('li');
-    
+  for (let i = 0; i < fruits.length; i++) {    
+    //fruits[i].index !==undefined? fruits[i].index:fruits[i].index=i;
     let newLi=document.createElement('li'); 
     //newLi.className='fruit__item fruit_violet';
     newLi.innerHTML=`<div class="fruit__info">
-        <div>index: ${i}</div>
+        <div>index: ${i} </div>
         <div>kind: ${fruits[i].kind}</div>
         <div>color: ${fruits[i].color}</div>
         <div>weight (кг): ${fruits[i].weight}</div>
       </div>`;
     fruitsList.appendChild(newLi);
-    // TODO: формируем новый элемент <li> при помощи document.createElement,
+    // Формируем новый элемент <li> при помощи document.createElement,
     // и добавляем в конец списка fruitsList при помощи document.appendChild
-  }  
+  } 
 };
 
 // первая отрисовка карточек
@@ -63,23 +64,21 @@ const getRandomInt = (min, max) => {
 const shuffleFruits = () => {
   let result = [];
   let indexEl=0;
+  let compareArr=[];   
+ 
+  for (let i = 0; i < fruits.length; i++) {
+    compareArr.push(fruits[i]);
+};
 
-  // ATTENTION: сейчас при клике вы запустите бесконечный цикл и браузер зависнет
-  while (fruits.length > 0) {
-    
-    // TODO: допишите функцию перемешивания массива
-    //
-    // Подсказка: находим случайный элемент из fruits, используя getRandomInt
-    // вырезаем его из fruits и вставляем в result.
-    // ex.: [1, 2, 3], [] => [1, 3], [2] => [3], [2, 1] => [], [2, 1, 3]
-    // (массив fruits будет уменьшатся, а result заполняться)
-    
-    indexEl=getRandomInt(0,fruits.length-1);
+  while (fruits.length > 0) {    
+    //  Функция перемешивания массива   
+    indexEl=getRandomInt(0,fruits.length-1);     
     result.push(fruits[indexEl]);
-    fruits.splice(indexEl,1);
-   //debugger;
+    fruits.splice(indexEl,1);  
   }  
-  fruits = result;
+  fruits = result; 
+  //Проверка нового массива на идентичность предыдущему и вывод предупреждения
+  JSON.stringify(compareArr)===JSON.stringify(fruits)? alert ('Перемешивание карточек не изменило порядок'):console.log('not Equal'); 
 };
 
 shuffleButton.addEventListener('click', () => {
@@ -90,10 +89,13 @@ shuffleButton.addEventListener('click', () => {
 /*** ФИЛЬТРАЦИЯ ***/
 
 // фильтрация массива
-const filterFruits = () => {
-  fruits.filter((item) => {
-    // TODO: допишите функцию
-  });
+const filterFruits = () => { 
+ fruits = JSON.parse(fruitsJSON); 
+ const min = minWeight.value || 0;
+ const max = maxWeight.value || 100; 
+ console.log(min,max);
+ const filtered = fruits.filter(item => item.weight>=min && item.weight<=max);
+ fruits = filtered;
 };
 
 filterButton.addEventListener('click', () => {
