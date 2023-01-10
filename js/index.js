@@ -42,20 +42,42 @@ let fruits = JSON.parse(fruitsJSON);
 /*** ОТОБРАЖЕНИЕ ***/
 
 // отрисовка карточек
-const display = () => {
+const display = (arrayObj=fruits) => {
   fruitsList.replaceChildren();
   // Очищаем fruitsList от вложенных элементов,
   // чтобы заполнить актуальными данными из fruits
 
-  for (let i = 0; i < fruits.length; i++) {    
+  for (let i = 0; i < arrayObj.length; i++) {    
     //fruits[i].index !==undefined? fruits[i].index:fruits[i].index=i;
     let newLi=document.createElement('li'); 
+    
+    switch (arrayObj[i].color) {
+      case 'фиолетовый':
+        newLi.className='fruit__item fruit_violet';
+        break;
+      case 'зеленый':
+        newLi.className='fruit__item fruit_green';
+        break;
+      case 'розово-красный':
+        newLi.className='fruit__item fruit_carmazin';
+        break;
+      case 'желтый':
+        newLi.className='fruit__item fruit_yellow';
+        break;
+      case 'светло-коричневый':
+        newLi.className='fruit__item fruit_lightbrown';
+        break;
+
+      default: newLi.className='fruit__item fruit_other';
+        break;
+    }   
+    
     //newLi.className='fruit__item fruit_violet';
     newLi.innerHTML=`<div class="fruit__info">
         <div>index: ${i} </div>
-        <div>kind: ${fruits[i].kind}</div>
-        <div>color: ${fruits[i].color}</div>
-        <div>weight (кг): ${fruits[i].weight}</div>
+        <div>kind: ${arrayObj[i].kind}</div>
+        <div>color: ${arrayObj[i].color}</div>
+        <div>weight (кг): ${arrayObj[i].weight}</div>
       </div>`;
     fruitsList.appendChild(newLi);
     // Формируем новый элемент <li> при помощи document.createElement,
@@ -99,18 +121,16 @@ shuffleButton.addEventListener('click', () => {
 /*** ФИЛЬТРАЦИЯ ***/
 
 // фильтрация массива
-const filterFruits = () => { 
- fruits = JSON.parse(fruitsJSON); 
+const filterFruits = () => {  
  const min = minWeight.value || 0;
- const max = maxWeight.value || 100; 
+ const max = maxWeight.value || 50; 
  console.log(min,max);
- const filtered = fruits.filter(item => item.weight>=min && item.weight<=max);
- fruits = filtered;
+ return fruits.filter(item => item.weight>=min && item.weight<=max); 
 };
 
 filterButton.addEventListener('click', () => {
-  filterFruits();
-  display();
+  const filteredArray=filterFruits();
+  display(filteredArray);
 });
 
 /*** СОРТИРОВКА ***/
@@ -220,10 +240,19 @@ sortActionButton.addEventListener('click', () => {
 });
 
 /*** ДОБАВИТЬ ФРУКТ ***/
+addActionButton.addEventListener('click', () => {  
+  // создание и добавление нового фрукта в массив fruits
+    // необходимые значения берем из kindInput, colorInput, weightInput
+  let addObject={};
 
-addActionButton.addEventListener('click', () => {
-  quickSort2(fruits,0,fruits.length-1);
-  // TODO: создание и добавление нового фрукта в массив fruits
-  // необходимые значения берем из kindInput, colorInput, weightInput
+  if (kindInput.value=='' || colorInput.value=='' || weightInput.value==''){
+    alert('Please fill all imputs (kind: color: weight:)');
+  }
+  else{
+    addObject.kind=kindInput.value;
+    addObject.color=colorInput.value.toLowerCase();
+    addObject.weight=weightInput.value;   
+    fruits.push(addObject);   
+  }
   display();
 });
